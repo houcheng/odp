@@ -1,0 +1,634 @@
+parted (1.4.24-4) unstable; urgency=low
+
+  * Applied Richard Hirst's hp-service partition patch
+
+ -- Timshel Knoll <timshel@debian.org>  Thu, 28 Mar 2002 12:36:48 +1100
+
+parted (1.4.24-3) unstable; urgency=high
+
+  * Applied patch from Richard Hirst <rhirst@linuxcare.com> which fixes a data
+    corruption bug on ia64 (GPT) disklabels (hence the urgency=high upload).
+    This problem is caused by a bug with gcc's __attribute__ ((packed))
+    "feature". Richard's patch also fixes endianness issues with the on-disk /
+    in-memory UUID of the GUID Partition Table, and an endianness bug where
+    64 bit which were little endian on disk were only being half transferred
+    to big endian in memory. This latter bug only affects big endian machines.
+  * Recompile against latest e2fsprogs, this fixes a problem where
+    incompatible versions of e2fsprogs can be installed
+
+ -- Timshel Knoll <timshel@debian.org>  Tue, 26 Mar 2002 18:09:12 +1100
+
+parted (1.4.24-2) unstable; urgency=low
+
+  * Many packaging changes merged from experimental 1.6.0-pre4-1 packages:
+  * debian/copyright: cleaned up copyright message and added 2002 to (C)
+  * debian/control.in:
+    - Fixed misspelling in parted-bf description (closes: #125216)
+    - added libparted1.4-i18n package with i18n message catalogs
+    - updated filesystem and disklabel lists in package descriptions
+  * debian/rules:
+    - use DESTDIR rather than prefix to install to debian/tmp
+    - use $(CURDIR) rather than `pwd` to get the current directory
+    - misc. small fixes
+
+ -- Timshel Knoll <timshel@debian.org>  Fri,  8 Mar 2002 00:14:36 +1100
+
+parted (1.4.24-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Wed, 30 Jan 2002 10:32:50 +1100
+
+parted (1.4.23-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Wed, 16 Jan 2002 00:02:03 +1100
+
+parted (1.4.22-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Sun, 30 Dec 2001 00:51:42 +1100
+
+parted (1.4.21-1) unstable; urgency=low
+
+  * New upstream release
+  * Disable -Werror when building on s390 (closes: #121267)
+
+ -- Timshel Knoll <timshel@debian.org>  Fri,  7 Dec 2001 23:51:02 +1100
+
+parted (1.4.20-1) unstable; urgency=low
+
+  * New upstream release
+  * Upstream now uses C99's PRIx64 for printf'ing __u64's - this fixes
+    compilation warnings on alpha and ia64 (closes: #115369)
+  * This should fix all alpha compile warnings, so removed --disable-Werror
+    configure flag when compiling on alpha (-Werror will help find bugs)
+
+ -- Timshel Knoll <timshel@debian.org>  Mon, 15 Oct 2001 11:00:29 +1000
+
+parted (1.4.19-2) unstable; urgency=low
+
+  * debian/rules: call ./configure with --disable-Werror flag on
+    alpha as well ... (closes: #114172)
+
+ -- Timshel Knoll <timshel@debian.org>  Mon,  8 Oct 2001 12:51:47 +1000
+
+parted (1.4.19-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Sun, 30 Sep 2001 18:51:41 +1000
+
+parted (1.4.18+19pre2-5) unstable; urgency=low
+
+  * Applied Matt Domsch <Matt_Domsch@Dell.com>'s GPT (GUID Partition Tables)
+    support patch (closes: #105555)
+
+ -- Timshel Knoll <timshel@debian.org>  Sat, 15 Sep 2001 10:46:55 +1000
+
+parted (1.4.18+19pre2-4) unstable; urgency=low
+
+  * debian/control: Build-Depend on libtool (closes: #112110)
+
+ -- Timshel Knoll <timshel@debian.org>  Thu, 13 Sep 2001 11:20:56 +1000
+
+parted (1.4.18+19pre2-3) unstable; urgency=low
+
+  * Fixes to *really* fix building on m68k (yes really this time ... grrr):
+    - configure.in: hacked to add --disable-Werror argument
+    - debian/control: added Build-Depends on recent autoconf and automake
+    - debian/rules:
+      + run aclocal, autoconf and automake before ./configure'ing
+      + run configure with --disable-Werror argument on m68k
+
+ -- Timshel Knoll <timshel@debian.org>  Wed, 12 Sep 2001 16:43:59 +1000
+
+parted (1.4.18+19pre2-2) unstable; urgency=low
+
+  * debian/control:
+    + Fixed typo - fixed typo - libparted1.4 package was Priority: extra
+      instead of parted-bf package for the last 2 releases - fixed this
+    + Updated the file system support list in package descriptions
+    + Removed Build-Depends: on autoconf, automake and libtool - these are
+      only needed if autoconf/automake need to be re-run ... (not the case)
+  * debian/rules:
+    + pass the correct libparted library directory to dh_shlibdeps for
+      correct parted package dependancies (closes: #102359)
+  * debian/README.Debian: Updated the file system support list
+
+ -- Timshel Knoll <timshel@debian.org>  Mon, 10 Sep 2001 00:40:49 +0000
+
+parted (1.4.18+19pre2-1) unstable; urgency=low
+
+  * New upstream (pre-) release
+  * Build with -Wno-uninitialized on m68k (really closes: #110264)
+
+ -- Timshel Knoll <timshel@debian.org>  Mon, 10 Sep 2001 00:28:47 +1000
+
+parted (1.4.18+19pre1-1) unstable; urgency=low
+
+  * New upstream (pre-) release (closes: #110264)
+  * debian/rules, debian/control:
+    + Build parted-bf package, built with --disable-readline (closes: #109161)
+    + Now using debhelper v3
+
+ -- Timshel Knoll <timshel@debian.org>  Wed,  5 Sep 2001 13:08:56 +1000
+
+parted (1.4.18-1) unstable; urgency=low
+
+  * New upstream release (never uploaded)
+
+ -- Timshel Knoll <timshel@debian.org>  Mon, 20 Aug 2001 20:23:41 +1000
+
+parted (1.4.17-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/rules: build with CFLAGS += -Wno-unused on m68k to work around
+    compiler bug (closes: #105819)
+
+ -- Timshel Knoll <timshel@debian.org>  Mon, 23 Jul 2001 09:39:22 +1000
+
+parted (1.4.16-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Tue, 17 Jul 2001 14:14:38 +1000
+
+parted (1.4.15-2) unstable; urgency=low
+
+  * Fixed ia64 compile errors (thanks to Jeff Licquia) (closes: #105529)
+
+ -- Timshel Knoll <timshel@debian.org>  Tue, 17 Jul 2001 10:22:56 +1000
+
+parted (1.4.15-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Tue, 10 Jul 2001 11:43:26 +1000
+
+parted (1.4.14-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/control: libparted1.4 Conflicts: parted (<< 1.4.13+14pre1), to
+    make sure that the soname change doesn't break stuff.
+
+ -- Timshel Knoll <timshel@debian.org>  Wed, 30 May 2001 21:55:26 +1000
+
+parted (1.4.13+14pre2-1) unstable; urgency=low
+
+  * New upstream release
+  * This means I don't need a patched configure.in, so don't need to
+    Build-Depend: auto{conf,make}, libtool ... (closes: Bug#99015)
+    Left the Build-Depends there anyway (just in case)
+  * This upstream release uses libtool 1.4 anyway, so that alone would fix
+    #99015 as well :-)
+  * debian/rules:
+    - explicitly specify --enable-shared to configure in configure target
+      (bug workaround for this version, shared libs aren't built by default)
+    - explicitly specify --disable-shared to configure in configure-dbg
+      target, this should substantially shorten the build time.
+
+ -- Timshel Knoll <timshel@debian.org>  Tue, 29 May 2001 10:10:09 +1000
+
+parted (1.4.13-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Sat, 26 May 2001 22:48:13 +1000
+
+parted (1.4.12-2) unstable; urgency=low
+
+  * debian/rules: Lots of updates to get stuff building properly, merged
+    binary-common and binary-libparted$(LIBPKGVER)-dbg rules.
+  * debian/control updates:
+    - added Build-Depends: autoconf (>= 2.50), automake (>= 1.4-p1), libtool
+      (closes: Bug#98673)
+    - Added '| libncurses5-dev' to libncurses-dev Build-Depends to provide
+      non-virtual installation candidate.
+    - Standards-Version: 3.5.4
+
+ -- Timshel Knoll <timshel@debian.org>  Sat, 26 May 2001 14:53:59 +1000
+
+parted (1.4.12-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/rules: made {build{,-dbg},configure{,-dbg}}-stamp stuff depend
+    directly on $(GENFILES), which stops ./configure from being repeatedly
+    run unnecessarily during the build procedure.
+
+ -- Timshel Knoll <timshel@debian.org>  Tue, 22 May 2001 17:26:34 +1000
+
+parted (1.4.11-4) unstable; urgency=low
+
+  * debian/control: libparted1.4-dbg Priority: extra
+  * debian/control: parted & libparted-dev now Suggests: parted-doc
+    (closes: Bug#97556)
+
+ -- Timshel Knoll <timshel@debian.org>  Tue, 15 May 2001 23:13:41 +1000
+
+parted (1.4.11-3) unstable; urgency=low
+
+  * Some big updates - lots of library versioning stuff automated ...
+    - debian/control and debian/shlibs.local now being generated from
+      debian/control.in and debian/shlibs.local.in respectively, with
+      debian/rules
+    - debian/libparted2{,-dev}.* moved to debian/libparted{,-dev}.*,
+      these are now copied to their appropriate places when necessary
+    - LIBPKGVER variable added to debian/rules, this is the library
+      package version (part of the library name). Initially set to
+      1.4, which is the new version number of libparted (ie. the
+      libparted package is now named libparted1.4, to keep in line
+      with upstream). I'll add a letter which will be bumped whenever
+      upstream's soname changes, if necessary (ie. libparted1.4a) ...
+  * Added support for DEB_BUILD_OPTIONS=noopt (compiles without -O2).
+  * debian/control.in debian/rules: Added building of libparted2-dbg
+    package, unstripped static lib with malloc debugging enabled.
+  * Fixed problem with ./configure being run twice, once on
+    'debian/rules build' and again on 'debian/rules binary-arch'
+  * Fixed shlibs library version _properly_, I changed the depends:
+    version but not the soname version :-(. With the versioning automation
+    stuff I have also added a LIBSONAME substitution, and also check that
+    parted's soname is what debian/rules (and thus debian/shlibs.local)
+    think that it is ...
+
+ -- Timshel Knoll <timshel@debian.org>  Wed,  2 May 2001 15:15:20 +1000
+
+parted (1.4.11-2) unstable; urgency=low
+
+  * Apparently 1.4.11 has a new soname, changed shlibs.local and
+    dh_makeshlibs to use (>= 1.4.11) (closes: Bug#95846)
+
+ -- Timshel Knoll <timshel@debian.org>  Tue,  1 May 2001 12:03:56 +1000
+
+parted (1.4.11-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Thu, 19 Apr 2001 01:49:23 +1000
+
+parted (1.4.10-2) unstable; urgency=low
+
+  * debian/rules: Added support for $DEB_BUILD_OPTIONS
+  * debian/rules: removed call to deprecated dh_suidregister
+  * debian/rules: added separate configure[-stamp] targets which call configure
+  * debian/control: updated disklabel list in package descriptions, added
+         list of supported filesystems.
+  * debian/control: libparted2: added Conflicts: and Replaces: libparted
+  * debian/README.Debian: updated disklabel list, added detailed list
+         of supported filesystem and the amount of support for each
+
+ -- Timshel Knoll <timshel@debian.org>  Thu, 29 Mar 2001 19:57:58 -0800
+
+parted (1.4.10-1) unstable; urgency=low
+
+  * New upstream release
+  * Converted to cvs-buildpackage.
+  * debian/rules: removed call to obsolete dh_testversion.
+  * debian/parted-doc.docs: removed reference to 0 byte file BUGS
+    (well, no bugs, great) :-)
+
+ -- Timshel Knoll <timshel@debian.org>  Tue, 20 Mar 2001 00:47:22 +1100
+
+parted (1.4.9-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Mon, 19 Feb 2001 18:21:43 +1100
+
+parted (1.4.8-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/control: Made libparted2 Suggest: libparted2-dev
+
+ -- Timshel Knoll <timshel@debian.org>  Sat, 10 Feb 2001 09:51:10 +1100
+
+parted (1.4.7-1) unstable; urgency=low
+
+  * New upstream release
+  * debian/control, debian/libparted1[-dev]*, debian/rules:
+    Updated library package names to libparted2 and libparted2-dev, as
+    this upstream version contains incompatible changes to the library
+    versioning system
+  * debian/control: Updated build-depends: on debhelper to version
+    >= 2.0 (for DH_COMPAT=2), added gettext.
+  * debian/README.Debian: updated list of supported partition tables
+    (added BSD disklabels to the list)
+
+ -- Timshel Knoll <timshel@debian.org>  Sun,  4 Feb 2001 18:30:05 +1100
+
+parted (1.4.6-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Sun,  7 Jan 2001 18:57:46 +1100
+
+parted (1.4.5-1) unstable; urgency=low
+
+  * New upstream release
+  * Updated package descriptions and README.Debian with a list of
+    supported partition tables / disklabels.
+  * debian/copyright: fixed bad email addresses of upstream authors, changed
+    copyright to Free Software Foundation, Inc. (it has been signed over
+    to the FSF).
+
+ -- Timshel Knoll <timshel@debian.org>  Sun,  7 Jan 2001 18:39:59 +1100
+
+parted (1.4.4-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Sun,  3 Dec 2000 18:58:28 +1100
+
+parted (1.4.3-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Tue, 28 Nov 2000 11:05:45 +1100
+
+parted (1.4.2-1) unstable; urgency=low
+
+  * New upstream release
+  * Removed empty NEWS file from parted-doc - fixes lintian warning.
+  * Changed all calls to dh_testversion in debian/rules to version 2.
+  * Modified debian/rules to not call dh_makeshlibs for arch-independent
+    parted-doc package.
+
+ -- Timshel Knoll <timshel@debian.org>  Wed, 22 Nov 2000 01:16:52 +1100
+
+parted (1.4.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Renamed libparted0 to libparted1, and libparted0-dev to libparted1-dev.
+  * Changed shlibs to depend on 'libparted1 (>= 1.4.0)' rather than
+    'libparted1 (= ${Source-Version})'.
+  * Made libparted1 Conflicts: libparted0 Replaces: libparted0 (since both
+    have their NLS messages in /usr/share/locale/*/LC_MESSAGES/parted.mo) -
+    I must find some way to work around this!!!
+
+ -- Timshel Knoll <timshel@debian.org>  Sun, 19 Nov 2000 22:52:57 +1100
+
+parted (1.2.13-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Mon, 13 Nov 2000 09:49:54 +1100
+
+parted (1.2.12-1) unstable; urgency=low
+
+  * New upstream release
+  * Changed build system to use DH_COMPAT=2, so the 'parted' package now
+    builds in the debian/parted directory. This included moving the 'dirs'
+    file to 'parted.dirs', and 'docs' to 'parted.docs', amongst other things.
+
+ -- Timshel Knoll <timshel@debian.org>  Sun,  5 Nov 2000 14:59:25 +1100
+
+parted (1.2.11-1) unstable; urgency=low
+
+  * New upstream release
+  * Moved parted.m4 (in /usr/share/aclocal) from parted to libparted0-dev.
+  * Moved all locales (from /usr/share/locales) from parted to libparted0.
+    This is the right behavior since most of the messages are for libparted,
+    I have asked the author if it is possible to split parted and libparted
+    locales ...
+  * Made libparted0 and libparted0-dev Conflict: parted (<< 1.2.11) to
+    avoid dpkg needing --force-overwrite ...
+  * Added -D_REENTRANT to CFLAGS in libparted/Makefile.am - to conform
+    to policy 3.2.1.
+  * Policy 3.2.1
+
+ -- Timshel Knoll <timshel@debian.org>  Wed, 18 Oct 2000 12:59:48 +1100
+
+parted (1.2.10-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Sun, 15 Oct 2000 23:24:15 +1100
+
+parted (1.2.9-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Tue, 12 Sep 2000 22:41:38 +1100
+
+parted (1.2.8-2) unstable; urgency=low
+
+  * debian/docs: debian/libparted0.docs: debian/libparted0-dev.docs:
+    Removed all documentation from packages other than parted-doc. All
+    packages have changelog and copyright, however (as per Debian
+    policy)
+
+ -- Timshel Knoll <timshel@debian.org>  Wed, 30 Aug 2000 20:01:15 +1100
+
+parted (1.2.8-1) unstable; urgency=low
+
+  * New upstream release
+  * Changed Build-Depends on libuuid-dev to uuid-dev (closes: Bug#69536)
+
+ -- Timshel Knoll <timshel@debian.org>  Tue, 22 Aug 2000 21:27:59 +1000
+
+parted (1.2.7-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Sun, 13 Aug 2000 13:33:42 +1000
+
+parted (1.2.6-1) unstable; urgency=low
+
+  * New upstream release
+  * Shared libs in libparted0 now install to /lib (otherwise it's pointless
+    having the parted executable in /sbin ...)
+  * Now building shlibs with `libparted 0 libparted0 (= ${Source-Version})'
+    rather than >= ... This is because the libparted API is still changing
+    quite regularly.
+
+ -- Timshel Knoll <timshel@debian.org>  Wed,  2 Aug 2000 21:13:42 +1000
+
+parted (1.2.5-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Thu, 20 Jul 2000 09:49:29 +1000
+
+parted (1.2.3-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@debian.org>  Wed, 28 Jun 2000 21:04:42 +1000
+
+parted (1.2.1-2) unstable; urgency=low
+
+  * Removed parted-doc Recommends: parted, and got rid of versions
+    from Suggests: parted, libparted0, libparted0-dev
+  * Changed description of libparted0-dev for consistency
+    (the word 'disk' was missing)
+
+ -- Timshel Knoll <timshel@debian.org>  Thu, 15 Jun 2000 13:25:56 +1000
+
+parted (1.2.1-1) unstable; urgency=low
+
+  * New upstream release
+  * The last release (1.2.0) didn't build on systems without libparted-dev
+    or libparted0-dev already installed, fixed in this version.
+  * Maintainer email addresses updated to `timshel@debian.org'
+  * debian/README.Debian updated to remove stuff about why shared libs
+    won't build (because they can be now) :)
+
+ -- Timshel Knoll <timshel@debian.org>  Thu, 15 Jun 2000 12:57:29 +1000
+
+parted (1.2.0-1) unstable; urgency=low
+
+  * New upstream release
+  * Merged a whole heap of changes from my locally built series of 1.1.x
+    packages, listed below:
+  * Can now build shared libraries. Split off package libparted0 which
+    contains the shared libraries.
+  * Renamed libparted-dev to libparted0-dev. This still Provides: libparted-dev
+    however.
+
+ -- Timshel Knoll <timshel@pobox.com>  Thu, 15 Jun 2000 02:24:05 +1000
+
+parted (1.0.17-2) unstable; urgency=low
+
+  * Rebuild to get rid of config.log junk in the .diff.gz (hmmm ... must've
+    killed ./configure ... dammit)
+  * Split docs off into new, separate package (parted-doc)
+  * libparted-dev now Suggests: parted
+
+ -- Timshel Knoll <timshel@pobox.com>  Tue, 13 Jun 2000 01:34:34 +1000
+
+parted (1.0.17-1) unstable; urgency=low
+
+  * New upstream release
+  * parted executable moved from /usr/sbin to /sbin
+  * "Section: " in debian/control changed for both 'parted' source &
+    'parted' binary packages from 'utils' to 'admin' (admin is more suitable)
+  * "Architecture: any" for both packages, (was 'i386 alpha'), so
+    packages will now be built for other arches (for resizing old DOS
+    drives, as parted currently only support DOS partition tables)
+
+ -- Timshel Knoll <timshel@pobox.com>  Mon, 12 Jun 2000 15:41:48 +1000
+
+parted (1.0.15-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@pobox.com>  Fri, 12 May 2000 19:08:52 +1000
+
+parted (1.0.14-1) unstable; urgency=low
+
+  * New upstream release
+  * Updated debian/README.Debian with current parted shared libs status ...
+
+ -- Timshel Knoll <timshel@pobox.com>  Sun, 16 Apr 2000 16:46:47 +1000
+
+parted (1.0.13-1) frozen unstable; urgency=low
+
+  * New upstream release
+  * This needs to go into frozen because it fixes a release critical bug:
+  * Fixed a severe bug which can cause massive data loss when converting
+    between FAT16 and FAT32 (closes: #62029).
+  * dh_testversion (in debian/rules) and Build-depends debhelper version
+    updated to 1.2.9 for dh_link ...
+  * Fixed typo in debian/control: Build-Depends: liuuid-dev -> libuuid-dev :)
+  * Policy 3.1.1
+
+ -- Timshel Knoll <timshel@pobox.com>  Tue, 11 Apr 2000 17:44:42 +1000
+
+parted (1.0.12-1) unstable; urgency=low
+
+  * New upstream release
+  * libparted-dev.docs updated to reflect movement of API docs to doc/
+  * Updated to Standards-Version 3.1.0 (with Build-Depends)
+
+ -- Timshel Knoll <timshel@pobox.com>  Tue, 28 Mar 2000 20:07:51 +1000
+
+parted (1.0.10-1) unstable; urgency=low
+
+  * New upstream release
+  * libparted-dev moved from libs to devel section
+
+ -- Timshel Knoll <timshel@pobox.com>  Fri,  3 Mar 2000 09:59:32 +1100
+
+parted (1.0.9-1) frozen unstable; urgency=low
+
+  * New upstream release (closes: Bug#58301)
+
+ -- Timshel Knoll <timshel@pobox.com>  Thu, 17 Feb 2000 21:28:53 +1100
+
+parted (1.0.7-1) frozen unstable; urgency=low
+
+  * New upstream release (closes: Bug#55871, parted fails on disks >16Gb)
+  * Manpage moved to upstream sources
+
+ -- Timshel Knoll <timshel@pobox.com>  Tue, 25 Jan 2000 23:29:56 +1100
+
+parted (1.0.5-1) frozen unstable; urgency=low
+
+  * New upstream release (closes: Bug#55613)
+  * Added Conflicts: fsresize and Replaces: fsresize (closes: Bug#54110)
+  * Updates to manpage, parted(8)
+
+ -- Timshel Knoll <timshel@pobox.com>  Wed, 19 Jan 2000 13:28:53 +1100
+
+parted (1.0.4-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@pobox.com>  Wed,  5 Jan 2000 17:23:57 +1100
+
+parted (1.0.2-1) unstable; urgency=low
+
+  * New upstream release
+  * Updated debian/copyright with date/time last updated
+  * Updated package descripion and README.Debian warnings
+
+ -- Timshel Knoll <timshel@pobox.com>  Mon,  3 Jan 2000 13:30:02 +1100
+
+parted (1.0pre8-1.1) unstable; urgency=low
+
+   * Sponsor upload.
+   * Recompiled against libreadline2g as libreadline4 is not yet in
+     potato. (closes: Bug#52205)
+
+ -- Torsten Landschoff <torsten@debian.org>  Sun, 19 Dec 1999 12:05:41 +0100
+
+parted (1.0pre8-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@pobox.com>  Mon, 15 Nov 1999 22:40:06 +1100
+
+parted (1.0pre7-2) unstable; urgency=low
+
+  * Copyright message and Authors updated
+  * Updated package description, descriptions are now more consistant
+  * Added warning about software being unstable to package description
+  * Changed libparted-dev to Section: devel
+  * Removed debian/dirs (not required)
+  * Manpage parted.8 is now only installed in the parted package
+
+ -- Timshel Knoll <timshel@pobox.com>  Sun, 14 Nov 1999 23:29:01 +1100
+
+parted (1.0pre7-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Timshel Knoll <timshel@pobox.com>  Tue,  9 Nov 1999 13:52:14 +1100
+
+parted (1.0pre4-2) unstable; urgency=low
+
+  * Package split into parted and libparted-dev
+
+ -- Timshel Knoll <timshel@pobox.com>  Mon,  8 Nov 1999 18:41:28 +1100
+
+parted (1.0pre4-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Timshel Knoll <timshel@pobox.com>  Fri,  5 Nov 1999 18:11:28 +1100
+
+Local variables:
+mode: debian-changelog
+End:

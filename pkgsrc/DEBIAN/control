@@ -1,0 +1,11 @@
+Package: odp
+Version: 1.0-0
+Section: admin
+Priority: optional
+Architecture: all
+Suggests: odp-doc
+Installed-Size: 76
+Maintainer: Houcheng Lin <houcheng@gmail.com>
+Description: 
+ Open deployment program
+ 

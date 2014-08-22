@@ -1,0 +1,8 @@
+INSTALL
+
+    on ubuntu 12.04:
+    apt-get -y install pssh nmap
+    apt-get -y install expect
+    apt-get -y install python-urwid
+    dpkg -i odp_1.0-0_all.deb
+    

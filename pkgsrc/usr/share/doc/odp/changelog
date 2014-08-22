@@ -1,0 +1,1309 @@
+This file is part of GNU Parted
+Copyright (C) 1999, 2000, 2001, 2002 Free Software Foundation Inc.
+
+This file may be modified and/or distributed without restriction.  This is
+not an invitation to misrepresent the history of GNU Parted.
+
+-----------------------------------------------------------------------------
+1.4.x
+-----------------------------------------------------------------------------
+
+2002-03-19  Richard Hirst  <rhirst@linxucare.com>
+* treat GPT structs as little-endian always, regardless of cpu byte order,
+  now gets unique GUID byte order correct, and works on big-endian
+* treat GUIDs as little-endian blobs except when calling libuuid functions,
+  avoid triggering gcc ((packed)) bug
+* add hp-service partition type support
+
+2002-01-26  Andrew Cluasen  <clausen@gnu.org>
+* added new/updated translations: ca, fr, da
+* backported fixes from 1.6.x:
+* libparted/fs_fat/resize.c (create_resize_context): copy old serial number
+  on resizing (fs_info->serial_number)  (reported by Andreas Dilger)
+* libparted/device.c (probe_proc_partitions): use fgets(), so we don't barf
+  on junk at end-of-line  (patch by Andreas Dilger)
+* released 1.4.24
+
+2002-01-13  Andrew Clausen  <clausen@gnu.org>
+* updated gl.po
+* released 1.4.23
+
+2002-01-11  Andrew Clausen  <clausen@gnu.org>
+* libparted/disk_dos.c (read_table): nested calls to read_tables()
+  (on nested extended partitions) are moved out into a separate loop,
+  to make sure they are called after logical partitions are added.
+  This makes the numbering consistent with Linux and fdisk.  Some versions
+  of Disk Druid appear to make such partition tables.
+
+2001-12-28  Andrew Clausen  <clausen@gnu.org>
+* updated ja.po and gl.po
+* released 1.4.22
+
+2001-12-27  Andrew Clausen  <clausen@gnu.org>
+* OUCH!  some minor ext2_mkfs fixes didn't get merged into the stable branch.
+* libparted/fs_ext2/ext2_mkfs.c (ext2_write_main): now writes the
+group number in each superblock backup properly.
+
+2001-12-01  Andrew Clausen  <clausen@gnu.org>
+* updated fr.po
+
+2001-11-24  Andrew Clausen  <clausen@gnu.org>
+* updated da.po and pt_BR.po
+
+2001-11-23  Andrew Clausen  <clausen@gnu.org>
+* updated de.po
+
+2001-11-22  Andrew Clausen  <clausen@gnu.org>
+* released 1.4.21
+
+2001-11-14  Andrew Clausen  <clausen@gnu.org>
+* libparted/device.c (canonicalize_file_name): backported, and used
+to replace (_normalize_path)
+
+2001-11-13  Andrew Clausen  <clausen@gnu.org>
+* released 1.4.21-pre1
+
+2001-11-10  Andrew Clausen  <clausen@gnu.org>
+* added pt.po (not to be confused with pt_BR.po).  Thanks Gonçalo!
+* libparted/fs_ext2/ext2_mkfs.c (ext2_mkfs): for FS's < 512Mb, use 1k
+blocks (not 4k)
+
+2001-11-05  Andrew Clausen  <clausen@gnu.org>
+* updated de.po and da.po
+
+2001-10-20  Andrew Clausen  <clausen@gnu.org>
+* libparted/disk_gpt.c (gpt_write_pmbr): the protective MBR should contain
+a partition covering the entire disk, starting from sector 1, not sector 0.
+
+2001-10-14  Andrew Clausen  <clausen@gnu.org>
+* libparted/disk_gpt.c: did %s/\%llx/" PRIx64 "/g
+* configure.in: added "-Wno-format" to CFLAGS, because the PRIx64 macros
+seem to confuse gcc.
+* released 1.4.20
+
+2001-10-07  Andrew Clausen  <clausen@gnu.org>
+* new po/da.po (thanks Keld!)
+
+2001-10-06  Andrew Clausen  <clausen@gnu.org>
+* libparted/fs_ext2/ext2_mkfs.c (ext2_mkfs_init_sb): s_rev_level:
+changed from PED_CPU_TO_LE16 from PED_CPU_TO_LE32 (this broke all big
+endian ext2 mkfs's :( ).
+* released 1.4.20-pre3
+
+2001-10-02  Andrew Clausen  <clausen@gnu.org>
+* applied gpt patch from Matt Domsch (sorry I took so long!).  If a GPT
+disk doesn't have a valid protective MBR, then it gives the option of either
+removing the GPT stuff or creating a valid protective MBR.
+* misc cleanups in gpt (libparted/disk_gpt.c)
+* libparted/disk.c (ped_partition_new): the check for attempts to create
+extended partitions on non-extended partition tables was extended to logical
+partitions as well
+* released 1.4.20-pre2
+
+2001-09-30  Andrew Clausen  <clausen@gnu.org>
+* new po/de.po
+* parted/ui.h (interactive_mode, non_interactive_mode): now accept a
+PedDevice** rather than a PedDevice*: motivation: the caller (main) needs
+to know what the current open device is (to close it, or whatever).
+(This is a bit yucky... perhaps [non_]interactive_mode should be responsible
+for opening/closing?)
+* parted/parted.c (main): pass pointers to dev to (interactive_mode,
+non_interactive_mode)
+* parted/ui.c (interactive_mode, non_interactive_mode): dev is now a
+PedDevice**
+* released 1.4.20-pre1
+
+2001-09-29  Andrew Clausen  <clausen@gnu.org>
+* new po/gl.po
+
+2001-09-28  Andrew Clausen  <clausen@gnu.org>
+* released 1.4.19
+
+2001-09-25  Andrew Clausen  <clausen@gnu.org>
+* libparted/fs_ext2/ext2_fs.h (EXT2_SUPER_JOURNAL_UUID): fixed a typo
+s/s_uuid/s_journal_uuid/
+* libparted/fs_ext2/ext2.c (ext2_open): if the ext3 recover flag is set, tell
+the user to run e2fsck (to replay the journal)
+
+2001-09-23  Andrew Clausen  <clausen@gnu.org>
+* libparted/fs_ext2/ext2_fs.h: added journaling entries to the super block,
+and access macros
+* libparted/fs_ext2/ext2.h (struct ext2_fs): has_internal_journal
+* libparted/fs_ext2/interface.c (_ext3_ops): we now support ext3 resizing
+* libparted/fs_ext2/ext2_inode_relocator.c (doscan): add an inode reference
+from the superblock to the journal inode (if there is one)
+* released 1.4.19-pre4
+* added po/da.po (thanks Keld!)
+
+2001-09-19  Andrew Clausen  <clausen@gnu.org>
+* parted/ui.c (print_using_dev): now only warns about CHS problems for MSDOS
+partition tables with non-lba fat partitions.
+* doc/USER: minor changes wrt chs/lilo
+* applied GPT patch from Matt Domsch (fixed now, thanks!)
+* libparted/fs_ext2 (ext2_open): fixed feature test bit-bashing bug, introduced
+when adding large file support
+* released 1.4.19-pre3
+
+2001-09-16  Andrew Clausen  <clausen@gnu.org>
+* libparted/fs_ntfs/ntfs.c (ntfs_set_system): added hidden flag
+
+2001-09-11  Andrew Clausen  <clausen@gnu.org>
+* include/parted/disk: fixed PED_DISK_TYPE_FIRST_FEATURE,
+PED_DISK_TYPE_LAST_FEATURE
+* added --enable-Werror (Timshel)
+
+2001-09-10  Andrew Clausen  <clausen@gnu.org>
+* added sv.po
+
+2001-09-08  Andrew Clausen  <clausen@gnu.org>
+* libparted/fs_ext2/ext2_fs.h: added i_size_high, changed EXT2_INODE_SIZE,
+added EXT2_FEATURE_RO_COMPAT_LARGE_FILE
+* libparted/fs_ext2/ext2_fs.c (_inode_update_size): large file support: writes
+to i_size_high
+* released 1.4.19-pre2
+
+2001-09-01  Andrew Clausen  <clausen@gnu.org>
+* po/POTFILES.in: fixed typo on hfs/xfs.c, which caused all sorts of automake
+headaches, when compiling outside of the source directory.
+* using gettext 0.10.39, which includes a new gettext.m4.  0.10.38 had some
+problems.
+* released 1.4.19-pre1
+
+2001-08-20  Andrew Clausen  <clausen@gnu.org>
+* configure.in: added --enable-part-static (msw)
+
+2001-08-19  Andrew Clausen  <clausen@gnu.org>
+* po/ja.po: new version
+* released 1.4.18
+
+2001-08-18  Andrew Clausen  <clausen@gnu.org>
+* fairly major bug fix: the FAT resize constraint now computes a correct
+minimum size.  It was underestimating.
+* libparted/fs_fat/fat.c (fat_get_resize_constraint): moved the "+ 64" to
+_get_min_size
+* (_calc_resize_data_size): new function, which calculates how much free
+space is available in the new partition during the resize, which excludes
+the free space that will be created afterwards (like, the space saved by
+shrinking the file allocation tables, for example)
+* (_test_size): now uses (_calc_resize_data_size)
+* parted/parted.c (_solution_check_distant): implemented.  (asks a user if
+a solution to a constraint is "good enough", where the solution is very
+different to what they asked for)
+* (do_mkfs, do_mkpartfs, do_move, do_resize): use _solution_check_distant
+
+August 13th 2001 - Andrew Clausen <clausen@gnu.org>
+* released 1.4.18-pre2
+
+August 11th 2001 - Andrew Clausen <clausen@gnu.org>
+* applied I2O support patch (msw)
+* moved Domsch's device_diskioctl.[ch] stuff in device.c, and made it work
+for the general case.
+* released 1.4.18-pre1
+* backed out the gpt code (broken!).  Kept the parts that changed device.c
+and disk.c.
+
+August 10th 2001 - Andrew Clausen <clausen@gnu.org>
+* added support for Hurd's translator block in the ext2 resizer
+* applied Matt Domsch's patch for EFI GPT support
+
+August 8th 2001 - Andrew Clausen <clausen@gnu.org>
+* allow ext3 open to succeed (msw)
+
+July 22nd 2001 - Andrew Clausen <clausen@gnu.org>
+* added ped_partition_get_path() - deals with devfs properly
+* ped_device_get() now normalizes the path it's given (following symlinks,
+etc.)
+* unautomaked --enable-pc98, and did it via #ifdef ENABLE_PC98 in disk_pc98.c
+instead.
+* released 1.4.17
+
+July 15th 2001 - Andrew Clausen <clausen@gnu.org>
+* note: we're using the new gettext + autoconf with hacked gettext.m4.
+(replace ac_given_srcdir with ac_srcdir in /usr/share/aclocal/gettext.m4)
+* back-ported xfs and jfs probe support
+* released 1.4.16
+
+July 11th 2001 - Andrew Clausen <clausen@gnu.org>
+* released 1.4.16-pre1
+
+July 10th 2001 - Andrew Clausen <clausen@gnu.org>
+* fixed bug in libparted/disk_dos.c _logical_constraint().  If the extended
+partition only occupies one cylinder, then we can't construct a not-the-start
+constraint (so, we should return the empty set, NULL)
+* added FAQ entry for installing GNU/Linux on a Windows box
+* added --disable-pc98, to appease msw^W^Wallow distro's that don't need/want
+PC98 support to remove the msdos sanity checks that might prevent some weird
+partition tables from being detected.
+* relaxed the msdos sanity check in the special case that a partition's
+cylinder value == "real value % 1024", rather than LBA magic, due to buggy
+partition programs (not us!)
+* the msdos sanity checks are only activated if the second sector (where
+the pc98 table resides) is non-zero
+
+July 9th 2001 - Andrew Clausen <clausen@gnu.org>
+* released 1.4.15
+
+July 6th 2001 - Andrew Clausen <clausen@gnu.org>
+* applied patch for ATA RAID from Arjan
+
+July 4th 2001 - Andrew Clausen <clausen@gnu.org>
+* added $PARTED_LIBS to rl_completion_matches check in configure.in, to
+catch termcap/curses/whatever in the link.
+
+July 3rd 2001 - Andrew Clausen <clausen@gnu.org>
+* released 1.4.15-pre2
+
+June 29th 2001 - Andrew Clausen <clausen@gnu.org>
+* fixed some warnings for gcc 3.0 (thanks Tom!)
+
+June 26th 2001 - Andrew Clausen <clausen@gnu.org>
+* added ext3 probe support (thanks msw!)
+* fixed ja.po (thanks msw!)
+
+June 21st 2001 - Andrew Clausen <clausen@gnu.org>
+* added doc/FAQ
+
+June 12th 2001 - Andrew Clausen <clausen@gnu.org>
+* applied patch from msw - make device.c handle weird devices that
+don't use /dev/maindeviceN for partitions.
+
+June 5th 2001 - Andrew Clausen <clausen@gnu.org>
+* added ped_disk_get_primary_partition_count() and
+ped_disk_get_last_partition_num() to API
+* released 1.4.15-pre1
+
+May 30th 2001 - Andrew Clausen <clausen@gnu.org>
+* released 1.4.14
+
+May 29th 2001 - Andrew Clausen <clausen@gnu.org>
+* use libtool 1.4, autoconf 2.50
+* if we don't HAVE_TERMCAP_H, then, stick in a prototype for tgetnum()
+* released 1.4.14-pre2
+* put AM_ENABLE_SHARED in... new libtool disables shared libraries by default.
+
+May 27th 2001 - Andrew Clausen <clausen@gnu.org>
+* set -lreadline before checking for rl_completion_matches in configure.in
+(Timshel)
+* s/HAVE_RL_COMPLETITION_MATCHES/HAVE_RL_COMPLETION_MATCHES/  (Timshel)
+* use glib's library versioning system (Timshel)
+* released 1.4.14-pre1
+
+May 26th 2001 - Andrew Clausen <clausen@gnu.org>
+* ext2_mkfs bug fixes (hidden by old revision level being 0!!!):
+	- first inode now 11
+	- error behaviour set to 1 (continue)
+* released 1.4.13
+
+May 23rd 2001 - Andrew Clausen <clausen@gnu.org>
+* ext2_inode_relocator.c, added (long) casts in fprintf() (thanks Timshel)
+* added AC_CHECK_FUNC(rl_completion_matches) to configure.in, and in ui.c, use
+that instead of completition_matches, if it is available.
+(completition_matches is being phased out)
+* replaced "type -p" in configure.in with:
+	LFS_CFLAGS="`getconf LFS_CFLAGS`" && CFLAGS="$CFLAGS $LFS_CFLAGS"
+(ash doesn't support type -p)
+* added #include <string.h> to libparted/fs_ext2/ext2_mkfs.c (thanks pixel)
+* cleaned up ped_partition_set_system(), wrt disk_type
+* released 1.4.13-pre1
+
+May 22nd 2001 - Andrew Clausen <clausen@gnu.org>
+* released 1.4.12
+
+May 21st 2001 - Andrew Clausen <clausen@gnu.org>
+* new po/de.po (German translations)
+
+May 16th 2001 - Andrew Clausen <clausen@gnu.org>
+* fixed loop_read() - checks part != NULL *before* trying to access it now ;-)
+* create revision 1.0 ext2 file systems (and not rev 0.1)
+
+May 14th 2001 - Andrew Clausen <clausen@gnu.org>
+* configure.in: s/which/type -p/
+* configure.in: shuffled things to get rid of warnings
+
+May 11th 2001 - Andrew Clausen <clausen@gnu.org>
+* new po/gl.po (Galician translations)
+
+May 8th 2001 - Andrew Clausen <clausen@gnu.org>
+* new po/ja.po (Japanese translations)
+
+May 6th 2001 - Andrew Clausen <clausen@gnu.org>
+* released 1.4.12-pre5
+
+May 4th 2001 - Andrew Clausen <clausen@gnu.org>
+* added 64-bit endian macros
+
+May 2nd 2001 - Andrew Clausen <clausen@gnu.org>
+* #include <string.h> in fs_ext2/interface.c
+* fs_ext2/ext2_mkfs.c: ext2_mkfs() now makes most of the "use-default"
+parameters 0.  (This isn't a public interface, so no incompat)
+* added CFLAGS=-Werror (yay!)
+
+April 29th 2001 - Andrew Clausen <clausen@gnu.org>
+* applied move syntax patch (make END specification optional) from
+Vincent Stelhé <vincent.stelhe@free.fr>.  Thanks!
+
+April 28th 2001 - Andrew Clausen <clausen@gnu.org>
+* fixed ped_device_{open,close}, so they only change dev->open_count on
+success
+* released 1.4.12-pre1
+* cleaned (and fixed endian bug) in mkfs code... directory entries are made
+properly now
+* released 1.4.12-pre2 (internally)
+* null terminate dir names (fix previous mkfs changes)
+* released 1.4.12-pre3 (internally)
+* other random endian mkfs stuff
+* released 1.4.12-pre4
+
+April 27th 2001 - Andrew Clausen <clausen@gnu.org>
+* fixed man page (thanks Timshel!)
+* constified ped_file_system_type_get_next() (thanks msw!)
+
+April 24th 2001 - Andrew Clausen <clausen@gnu.org>
+* fixed example 2 in doc/USER (section 2.5.2)
+* changed msdos_write() (in libparted/disk_dos.c), to make the per-logical
+container extended partition just wrap the contained logical partition
+(and not extend to the end of the main extended partition)  Apparantly
+this fixes problems with other partition programs.
+* configure.in: CFLAGS="$CFLAGS -D_REENTRANT" - useful for threaded users
+of libparted
+
+April 13th 2001 - Andrew Clausen <clausen@gnu.org>
+* fixed buglet... the arbitary/safe/conservative number of 5 was chosen for
+the number of heads to try when aligning logical partitions.  However, for
+(virtual) disks with heads < 5, this causes wrap-around, causing recursive
+partition tables.  Fortunately, heads < 5 is rare, except for using Parted
+on files, or whatever.  s/5/PED_MIN (5, dev->heads)/ in disk_dos.c
+* minor changes to doc/USER and doc/FAT
+
+April 11th 2001 - Andrew Clausen <clausen@gnu.org>
+* changed int -> size_t for lots of stuff in parted/strlist.c
+* moved -luuid out of LIB and into UUID_LIB, to prevent multiple ugly -luuid's
+* added AC_ISC_POSIX to configure.in
+* fixed typo in error message in configure.in ... libbuid -> libuuid
+* AC_CHECK_HEADER -> AC_CHECK_HEADERS for -ltermcap
+* libparted/fs_ext2/ext2_resize.c, type-cast to (void*) first arg to
+ped_realloc()
+
+April 8th 2001 - Andrew Clausen <clausen@gnu.org>
+* released 1.4.11
+
+April 4th 2001 - Andrew Clausen <clausen@gnu.org>
+* updated docs w.r.t. boot disks
+
+March 30th 2001 - Andrew Clausen <clausen@gnu.org>
+* sun_partition_align() allow partitions to END anywhere now (but prefer
+at the end of cylinders)
+* released 1.4.11-pre2
+* added assertions ped_partition_is_active (part) for
+ped_partition_{set,get}_name()
+
+March 28th 2001 - Andrew Clausen <clausen@gnu.org>
+* for msdos disk labels: if the partitions aren't alignend properly, now
+makes an attempt during msdos_partition_align() to align properly.
+* new pt_BR.po (thanks Eliphas)
+
+March 26th 2001 - Andrew Clausen <clausen@gnu.org>
+* moved Sun disk geometry sanity checks from sun_probe() into a separate
+helper function _check_geometry_sanity(), which is now called by sun_open().
+Now allows users to ignore.
+* fixed endianess bug in disk_sun.c.  The size of the whole disk partition
+was being computed incorrectly.
+* released 1.4.11-pre1
+
+March 25th 2001 - Andrew Clausen <clausen@gnu.org>
+* in ped_device_close(), assert that the device is open (thanks to Wouter Coene)
+* catch a bug in gcc 2.95.2 in ext2_mkfs_init_sb()  (thanks Wouter)
+* only call bindtextdomain() in ped_init() if native language support is
+enabled.  (thanks Wouter)
+
+March 21st 2001 - Andrew Clausen <clausen@gnu.org>
+* fixed the assertion in disk.c, in _disk_check_sanity().  On msdos disk
+labels, free space partitions should be > 5 * disk->dev->sectors, not > 5 * 63.
+
+March 17th 2001 - Andrew Clausen <clausen@gnu.org>
+* now explicitly requires autoconf 2.49b, and will complain sufficiently...
+
+March 16th 2001 - Andrew Clausen <clausen@gnu.org>
+* changed include/parted/endian.h, to use __u{16,32} instead of unsigned
+{short, int}
+* more copyright notice bureaucracy
+* fixed BSD d_npartitions endianness and fencepost bugs
+* released 1.4.10
+
+March 14th 2001 - Andrew Clausen <clausen@gnu.org>
+* fixed includes in libparted/libparted.c
+
+March 11th 2001 - Andrew Clausen <clausen@gnu.org>
+* deal with serial numbers properly in FAT
+* ped_geometry_destroy() no longer calls ped_geometry_sync()  (what was I
+thinking?!)
+
+February 22nd 2001 - Andrew Clausen <clausen@gnu.org>
+* made the alignment-workaround go by default in script mode, and made it
+more inviting ("it is safe to ignore", etc.)
+* released 1.4.10-pre1
+
+February 21st 2001 - Andrew Clausen <clausen@gnu.org>
+* work around bug in Windows ME, that generates broken partition tables
+
+February 16th 2001 - Andrew Clausen <clausen@gnu.org>
+* released 1.4.9
+
+February 14th 2001 - Andrew Clausen <clausen@gnu.org>
+* new ja.po
+* new USER.jp
+
+February 7th 2001 - Andrew Clausen <clausen@gnu.org>
+* ext2_mkfs() and swap_write() doesn't zero out the first block... useful for
+Sun...
+* fixed bsd_partition_align() - checks if the intersection of two
+constraints exists, before trying to find a solution.
+* released 1.4.9-pre1
+
+February 2nd 2001 - Andrew Clausen <clausen@gnu.org>
+* updated doc/USER, wrt CHS/LBA, etc.
+
+February 1st 2001 - Andrew Clausen <clausen@gnu.org>
+* fixed ext2 mkfs code: the lost+found inode gets create/modify/access time
+time (NULL), rather than 1969 ;-)
+* fixed fat: changed FatCluster from __s32 to __u32.  Arghh.
+
+January 29th 2001 - Andrew Clausen <clausen@gnu.org>
+* added Sun regression tests
+* released 1.4.8
+
+January 24th 2001 - Andrew Clausen <clausen@gnu.org>
+* fixed (hacked) disk_dos.c and disk_bsd.c, so *_partition_set_flag() always
+pass an fs_type != NULL to ped_partition_set_system()
+* added partition flags for Sun disk labels
+* released 1.4.8-pre1 (internally)
+* more hacking on Sun stuff
+* released 1.4.8-pre2
+
+January 23rd 2001 - Andrew Clausen <clausen@gnu.org>
+* added Sun disk label support (thanks Ben!)
+* added UFS probe/clobber support (thanks Ben!)
+* added PED_DEVICE_FILE support (as opposed to going through
+PED_DEVICE_UNKNOWN)
+
+January 18th 2001 - Andrew Clausen <clausen@gnu.org>
+* we now require autoconf 2.49b to build configure from configure.in,
+because it provides the new AC_CHECK_SIZEOF
+* use new AC_CHECK_SIZEOF for off_t.
+* changed configure.in to match the new AC_CHECK_TYPE
+* hacked libtool.m4 (!)... I hope this all gets fixed properly, soon...
+
+January 17th 2001 - Andrew Clausen <clausen@gnu.org>
+* tried to make libparted/device.c more portable
+* libparted/fs_fat/bootsector.h - fixed the size of the FAT16 part of the
+union... needed an extra byte in boot_code.  (purely aesthetic ;-)
+
+January 15th 2001 - Andrew Clausen <clausen@gnu.org>
+* released 1.4.7
+
+January 10th 2001 - Andrew Clausen <clausen@gnu.org>
+* fixed ped_file_system_clobber() - wasn't leaving/fetching exceptions
+properly
+
+January 9th 2001 - Andrew Clausen <clausen@gnu.org>
+* fixed _calc_min_logical_start() - was horribly broken.  Only affects the new
+work-around for "cylinder not aligned", etc.
+* released 1.4.7-pre4 (internally)
+* don't try to guess the geometry for a second time... (introduced
+geom_already_guessed to PedDevice)
+* released 1.4.7-pre5
+
+January 8th 2001 - Andrew Clausen <clausen@gnu.org>
+* ext2_mkfs now enables file-type by default.
+* ped_partition_new()  (not DISK_partition_new()) calls
+ped_partition_set_system() now.  Makes sure it calls ped_partition_set_system()
+for extended partitions too!
+* released 1.4.7-pre1 (internally)
+* added documentation for ped_file_system_clobber()
+* fixed semantics for ped_file_system_clobber() - they need to change, since
+ped_file_system_probe() is different...
+* released 1.4.7-pre2 (internally)
+* released 1.4.7-pre3
+
+January 6th 2001 - Andrew Clausen <clausen@gnu.org>
+* msdos_partition_new() if there is no file system passed, sets the system
+to 0x83.  0 is a bad choice, because it means it isn't a partition.  It's
+an even worse choice, because it will make msdos_probe() fail.
+* released 1.4.6
+
+January 5th 2001 - Andrew Clausen <clausen@gnu.org>
+* "partition not aligned" workaround (similar to that in 1.2.x)
+* uses dgettext (PACKAGE, ...) instead of gettext (...).  Updated API docs,
+to reflect this (for ped_partition_flag_get_name(), etc.)
+* released 1.4.6-pre1
+* fixed brain-dead bug, dealing with min_geom in _primary_constraint()
+in libparted/disk_dos.c
+* released 1.4.6-pre2 (internally)
+* fixed another bug (out-by-one, in _primary_constraint(), again)
+* added bindtextdomain() to ped_init()
+* released 1.4.6-pre3 (internally)
+
+January 4th 2001 - Andrew Clausen <clausen@gnu.org>
+* removed that annoying "Parted's boot loader" message
+* ped_file_system_probe() now attempts ped_file_system_open(), if there
+is any ambiguouity
+
+December 29th 2000 - Andrew Clausen <clausen@gnu.org>
+* mac_clobber() now nukes the partition map as well ;-)
+
+December 28th 2000 - Andrew Clausen <clausen@gnu.org>
+* documented PedConstraint and PedAlignment (doc/API)
+* released 1.4.5
+* applied BSD disk label support patch (thanks Matt!)
+
+December 27th 2000 - Andrew Clausen <clausen@gnu.org>
+* made incompatible change to API: changed ped_constraint_exact() now takes
+a PedGeometry, not a PedPartition (what was I thinking?!)
+
+December 21st 2000 - Andrew Clausen <clausen@gnu.org>
+* the bug fix in 1.4.5-pre3 (wrap-around bug) was wrong.  Fixed properly now.
+* made the FAT16 <-> FAT32 conversion messages more friendly
+* released 1.4.5-pre4
+
+December 20th 2000 - Andrew Clausen <clausen@gnu.org>
+* ext2_mkfs() now makes sparse file systems by default
+* rearranged ext2_mkfs() a bit, and separated generation of the super block
+* fixed bug in ext2_mkfs(): if there isn't enough room for per-group
+metadata in the last block group, then chop it off!
+* fixed ext2 bug in ext2_is_data_block() in ext2.h.  I forgot to
+endian-awarenize (?) it!!!
+* FAT resizer now avoids changing the fat type (FAT16 or FAT32) in script
+mode
+* removed error checking, after the "point of no return" in the FAT resizer
+* updated documentation, adding info about FAT16 <-> FAT32, and boot loaders
+
+December 19th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed nasty wrap-around bug in fat_construct_directory() and
+fat_convert_directory(), when directories have their last cluster/sector
+filled.
+* merged in FAT32 boot loader fix (now copies the "hidden sectors")
+* released 1.4.5-pre3
+
+December 15th 2000 - Andrew Clausen <clausen@gnu.org>
+* merge FAT fix from 1.2.14-pre1
+* Apple_Free partitions have status 0x0 (not 0x33)
+* released 1.4.5-pre2
+
+December 8th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed _ext2_get_resize_constraint().  constraint->min_size was calculated
+in (ext2) blocks, not 512 byte sectors.  (patch from Matt Wilson)
+
+December 5th 2000 - Andrew Clausen <clausen@gnu.org>
+* commented out "this is not a block device", because it already warns about
+"this is not SCSI/IDE", etc.
+* added another example to the documentation
+* released 1.4.5-pre1
+
+December 4th 2000 - Andrew Clausen <clausen@gnu.org>
+* made the "unable to align partition" error message a bit more understandable,
+and allow the problem to be ignored.
+* added an assertion to ext2_is_data_block(), to make sure the block
+is in the file-system.
+* added a note about "make install-libs" for e2fsprogs
+
+November 30th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed a brain-dead bug in ext2_meta.c:109.  This bug causes growth of ext2
+all file systems, that require more GDT blocks to get corrupted!!!  OUCH!!!
+* fixed regression tests, to test GDT growth
+* released 1.4.4
+
+November 29th 2000 - Andrew Clausen <clausen@gnu.org>
+* ped_device_add() adds to the end now
+* added a check in /proc/partitions for devices
+* released 1.4.4-pre1
+
+November 28th 2000 - Andrew Clausen <clausen@gnu.org>
+* added error checking to both versions doinode().  Hmmm, do I like this
+idea of 2 doinode()'s?
+* finalized the copyright assignments, and now we can get rid of lots of
+annoying bureaucracy (read: s/Andrew Clausen, Lennert .../Free Softw.../g)
+* changed "cp FROM-MINOR [TO-DEVICE] TO-MINOR" to
+"cp [FROM-DEVICE] FROM-MINOR TO-MINOR"
+
+November 24th 2000 - Andrew Clausen <clausen@gnu.org>
+* added ped_file_system_clobber_exclude(), and resize/copy now use it.
+* fixed hfs_clobber() and reiserfs_clobber()
+* released 1.4.3
+
+November 19th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed a few mistakes in doc/USER (thanks Stefan!)
+* now uses the en_US locale for numbers.  (quick fix, because the "lexer"
+isn't properly i18nized yet - I'll fix this properly next week, because
+I intend to do Major Surgery TM on the command parser anyway).  Basic
+problem is: the lexer says a number is [0-9.]+, but in Europe, s/\./,/.
+* released 1.4.2
+
+November 16th 2000 - Andrew Clausen <clausen@gnu.org>
+* loop-back is now probed last.
+* removed dependance on <linux/fs.h>
+* discovered that type-casts have high precedence.  oops.
+s/(long) EXPR/(long) (EXPR)/, which fixes seg faults on PPC.
+
+November 15th 2000 - Andrew Clausen <clausen@gnu.org>
+* added read-only support (useful for disk imaging from CD-ROMs)
+* changed default behaviour to warnings such as "not a block device" (in
+libparted/device.c) to PED_EXCEPTION_IGNORE.
+* released 1.4.1
+
+November 14th 2000 - Andrew Clausen <clausen@gnu.org>
+* removed the scary "development version only TM" message.  OOPS!
+
+November 13th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in changes from 1.2.13
+* released 1.4.0
+
+-----------------------------------------------------------------------------
+1.3.x
+-----------------------------------------------------------------------------
+
+November 11th 2000 - Andrew Clausen <clausen@gnu.org>
+* added ./configure --enable-all-static
+* mac_partition_new() now sets the name to "untitled".
+
+November 8th 2000 - Andrew Clausen <clausen@gnu.org>
+* added an assertion, that the disk has the PED_DISK_TYPE_EXTENDED feature,
+for extended partitions, in ped_partition_new()
+
+November 4th 2000 - Andrew Clausen <clausen@gnu.org>
+* released 1.4.0-pre8
+* file systems only get ped_file_system_clobber()'d if mkfs is supported for
+that fs
+* fixed hfs_probe()
+
+November 3rd 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed some bugs with the mac_partition_align() stuff
+* cleaned the doc/USER a bit more
+
+November 2nd 2000 - Andrew Clausen <clausen@gnu.org>
+* Mac bug fixes & reorganisation
+* mac_partition_align() - greedily takes up free space now, if it is consistent
+with the constraints.
+* set policy for _partition_align() - must be in update mode.  Changed
+other functions to meet this.
+* released 1.4.0-pre6
+* fixed a stupid bug introduced in 1.4.0-pre6, in libparted/disk_dos.c,
+read_table()  Was passing a pointer to a pointer of a constraint, as opposed to
+the pointer.
+* released 1.4.0-pre7
+
+October 31st 2000 - Andrew Clausen <clausen@gnu.org>
+* much hacking on Mac support
+* merged in changes to 1.2.12-pre3
+* released 1.4.0-pre5
+
+October 22nd 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed a bug in libparted/disk_mac.c, that broke mkpart*.  In
+mac_partition_new(), it was checking for failure, but missed out the '!'.
+* released 1.4.0-pre4
+
+October 21st 2000 - Andrew Clausen <clausen@gnu.org>
+* commented out the linux-swap Linux 2.0 warning.  It annoys more users than it
+helps.
+* merged 1.2.11
+* hacked around the mac-boot & no-HFS problem, by setting the file system
+temporarily, in mac_partition_set_system()  (YUCK!)
+* applied a patch from Masahiro Sakai <ZVM01052@nifty.ne.jp>.  Now uses
+mbs* as opposed to iconv.  That fixes lots of brokeness, but there may be
+problems for utf-8 users... but this will be solved by gettext in future.
+* released 1.4.0-pre3
+* fixed the annoying linux-swap on mac bug (it was trying to set the swap
+flag, before setting the partition type to linux-swap, which caused the
+Mac disk label code to complain)
+
+October 16th 2000 - Andrew Clausen <clausen@gnu.org>
+* uses Apple_UNIX_SVR2 (instead of Unix)
+* merged 1.2.11-pre1
+
+October 15th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed a bug in ped_constraint_solve_nearest() - errr to complicated to
+explain - easier to look at the diff.  Basically: I wasn't taking the
+intersection of the allowable start and end ranges properly, WRT min_start.
+* removed some memory leaks from libparted/disk_dos.c, around the constraint
+stuff.
+* released 1.4.0-pre2
+
+October 14th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed boot flag stuff for Mac
+* docs have been massively updated (ages ago...)
+* merged in changes to 1.2.10-pre3 (notably: malloc() debugging, and all the
+bugs / leaks fixed as a result ;-)
+
+September 25th 2000 - Andrew Clausen <clausen@gnu.org>
+* added ped_disk_remove_partition()
+
+September 24th 2000 - Andrew Clausen <clausen@gnu.org>
+* mac fixes: writes new signature now, s/Apple_Unix/Apple_UNIX/g
+
+September 23rd 2000 - Andrew Clausen <clausen@gnu.org>
+* reiserfs_probe() - doesn't probe outside of the partition any more ;-)
+* lots of work on API docs
+
+September 21st 2000 - Andrew Clausen <clausen@gnu.org>
+* added a bit to the documentation about how to deal with the boot disk, when
+it doesn't support your hardware
+* released 1.4.0-pre1
+
+September 20th 2000 - Andrew Clausen <clausen@gnu.org>
+* added the LBA partition flag
+* ped_partition_is_busy() - for extended partitions, now checks all logical
+partitions for business.
+* constraint solver will always satisfy constraint->min_size, if possible, now.
+The constraint solver is now complete (the existence of a solution implies
+that a solution will be found :-)
+* fixed semantics for _best_solution() in disk_dos.c
+* added documentation WRT LVM and RAID
+* updated documentation, to much current command set
+
+September 17th 2000 - Andrew Clausen <clausen@gnu.org>
+* constraint solver is a bit more expressive - the start and end of partitions
+are constrained independently.  This allows constraints for extended partitions,
+keeping the extended partitions big enough to fit the logical partitions.
+* used the new constraint solver, to fix the extended partition Issues.
+* released 1.3.3
+
+September 10th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in changes from 1.2.8 to 1.2.9
+
+September 3rd 2000 - Andrew Clausen <clausen@gnu.org>
+* ped_disk_add_partition() allows the right number of primary partitions now!
+
+August 25th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed msdos_probe() - it didn't like LBA partitions
+* reverted ped_partition_set_flag().  Doesn't call ped_partition_set_system()
+anymore.  What was I thinking?  It's the responsibiltiy of *_set_flag() to call
+ped_partition_set_system().
+* added RAID and LVM partition flags
+* fixed a bug in alloc_root_dir() - now allocates enough clusters in
+FAT16 -> FAT32 conversions (!)  Rarely does damage (and always avoidable,
+if you follow the advise)
+* fat_get_resize_constraint() is 100% accurate now (min_size wasn't accurate
+before)
+
+August 19th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed ext2_mkfs() inode thingy (!)
+* fixed semantics of ped_partition_set_flag() - now calls
+ped_partition_set_system()
+* added "select" command
+* added "move" command
+* fixed a bug in ped_disk_set_partition_geom() - partition list wasn't getting
+re-ordered, if the partition was moved about.
+* fixed a bug in libparted/disk_mac.c:762 _disk_count_active_partitions().  It
+assumed that the last partition would be the highest numbered partition.
+* get rid of that "BIOS geometry" message for non IDE/SCSI devices, or on
+non x86 arch's.
+* merged in changes to 1.2.8
+
+August 14th 2000 - Andrew Clausen <clausen@gnu.org>
+* added stubs for HFS, Reiserfs and NTFS
+
+August 12th 2000 - Andrew Clausen <clausen@gnu.org>
+* added ped_file_system_clobber() stuff (hint: needed for reiserfs :-)
+* merged in changes from 1.2.4-pre1 to 1.2.7
+* released 1.3.0
+
+August 6th 2000 - Andrew Clausen <clause@gnu.org>
+* ext2 code now works on big-endian machines :-)
+* released 1.3.0-pre7
+
+August 5th 2000 - Andrew Clausen <clausen@gnu.org>
+* more hacking on ext2 mac support.
+* random code-cleanup.
+
+July 31st 2000 - Andrew Clausen <clausen@gnu.org>
+* made libparted/fs_ext2/* big-endian-aware
+
+July 27th 2000 - Andrew Clausen <clausen@gnu.org>
+* wrote a constraint solver :-)  libparted/natmath.c, libparted/constraint.c,
+include/parted/natmath.h and include/parted/constraint.h
+
+July 15th 2000 - Andrew Clauesn <clausen@gnu.org>
+* Mac read/write is looking good :-)
+* released 1.3.0-pre3
+
+July 14th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in changes between 1.2.3 and 1.2.4-pre1.
+
+July 13th 2000 - Masahiro SAKAI <ZVM01052@nifty.ne.jp>
+* improved _set_system() on PC98 disk label.
+* changed fat_set_system(), to preserve original ID when possible.
+* changed _ext2_set_system() and swap_set_system(), to correct "bootable"
+flag. (Linux/98 uses this flag to make a distinction between ext2 and
+linux-swap.)
+
+July 9th 2000 - Andrew Clausen <clausen@gnu.org>
+* read-only Mac partition map support is semi-working :-)
+* PC98 is looking a bit nicer now.
+* released 1.3.0-pre2
+
+July 3nd 2000 - Andrew Clausen <clausen@gnu.org>
+* got PC98 and loopback semi-working :-)
+* released 1.3.0-pre1
+
+June 23rd 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in changes, up to 1.2.3-pre1.  (I've been hacking on
+libparted/disk_mac.c, not finished yet)
+
+June 15th 2000 - Andrew Clausen <clausen@gnu.org>
+* forked off 1.3.x series
+
+-----------------------------------------------------------------------------
+1.2.x		Before fork off development series
+-----------------------------------------------------------------------------
+June 15th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed minor build bug: fixed include problem in debug/clearfat/Makefile.am.
+* released 1.2.1
+
+June 14th 2000 - Andrew Clausen <clausen@gnu.org>
+* all looks well ;-)
+* released 1.2.0
+
+-----------------------------------------------------------------------------
+1.1.x
+-----------------------------------------------------------------------------
+
+June 11th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in changes to 1.0.17.
+* released 1.1.6
+
+May 27th 2000 - Andrew Clausen <clausen@gnu.org>
+* rearranged tools and clearfat stuff.  Updated test scripts (from devtools),
+and included them.
+* released 1.1.5
+
+May 20th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed bugs in maintaining free_cluster_count and bad_cluster_count in
+libparted/fs_fat/table.c
+* fixed fat_check_resize_geometry()
+* added Galacian translations (thanks Jacobo :-)
+* added tools/
+* added tools/clearfat
+* released 1.1.5-pre1
+
+May 13th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in changes to 1.0.15
+* released 1.1.4
+
+April 16th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in changes to 1.0.14
+* got it to compile ;-)
+
+April 13th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in changes to 1.0.14-pre1
+* released 1.1.4-pre1
+
+April 11th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in changes to 1.0.13
+
+March 26th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in changes to 1.0.12
+
+March 24th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in changes to 1.0.11
+* released 1.1.3
+
+March 14th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in changes to 1.0.11-pre1
+* released 1.1.3-pre1
+
+March 13th 2000 - Andrew Clausen <clausen@gnu.org>
+* finally got the off_t checks working properly!
+
+March 4th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged changes to 1.0.10 in
+* released 1.1.2
+
+March 2nd 2000 - Andrew Clausen <clausen@gnu.org>
+* hacked it to work on linux-ppc (probably breaks on the Alpha now :-)
+Don't get too excited.  I haven't added the disk-label support yet.
+
+February 15th 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* merged changes to 1.0.9 in
+* completed cluster resize down code :-)  Now to begin debugging...
+
+February 11th 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* merged 1.0.8 with other work, to create 1.1.0-pre1, which includes the
+following items
+* made ped_device_* POSIX compliant
+* added fat_collect_cluster_info() - replaces the "flag map", to provide
+fat_get_cluster_usage() and fat_get_cluster_flag()
+
+-----------------------------------------------------------------------------
+1.0.x		After fork off development series
+-----------------------------------------------------------------------------
+
+June 14th 2000 - Andrew Clausen <clausen@gnu.org>
+* released 1.0.18
+
+June 13th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in lots more translations (sorry, didn't keep track!)
+* changed the new ped_geometry_test_[overlap|inside]() functions, to
+require a positive result to be on the same disk ;-)
+* updated documentation for ped_geometry_*()
+
+June 6th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged in Galician, Dutch, Japanese and Russion translations.
+
+June 5th 2000 - Andrew Clausen <clausen@gnu.org>
+* now tolerates empty extended partitions created with Partition Magic.
+(PM fills the first sector with 0xf6).  read_table() in libparted/disk_dos.c
+* read_table() in libparted/disk_dos.c.  Now handles the exception correctly,
+for a bad signature (the brackets where around the wrong way)
+* new German and Brazillian Portugese translations.
+* released 1.0.17
+
+June 1st 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed some problems with RPMs (parted.spec.in).
+* major work on libparted/disk.c.  Resizing extended partitions should work
+properly now.  Marginally less messy.  (Layout is still really bad, but you can
+breathe on the code without it exploding now ;-)
+* released 1.0.17-pre1
+
+May 27th 2000 - Andrew Clausen <clausen@gnu.org>
+* updated Japanese translations
+* updated documentation, to encourage reading of Partition mini-HOWTO
+* released 1.0.16
+
+May 22nd 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed bug in libparted/device.c:  if probe_geometry() fails, then
+dev->sector_size is now set to 512.
+* removed redundant ped_device_probe_all() in parted/parted.c.  Should be
+quicker now ;-)
+* released 1.0.16-pre2
+
+May 20th 2000 - Andrew Clausen <clausen@gnu.org>
+* merged bug-fixes from 1.1.5-pre1 in maintaining free_cluster_count and
+bad_cluster_count in libparted/fs_fat/table.c
+* added Galacian translations (thanks Jacobo :-)
+* released 1.0.16-pre1
+
+May 12th 2000 - Andrew Clausen <clausen@gnu.org>
+* updated documentation (and Japanese documentation - thanks Okuji :-)
+* released 1.0.15
+
+May 6th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed minor bugs with word wrapping.
+* added --help (-h) --version (-v) --script (-s) --interactive (-i)
+* released 1.0.15-pre3
+
+May 2nd 2000 - Andrew Clausen <clausen@gnu.org>
+* new version of Japanese translations.
+
+April 29th 2000 - Andrew Clausen <clausen@gnu.org>
+* after much agonizing and procrastination, decided not to have a mode command.
+Why would you want interactive mode if you're not an a tty?  I'm open to
+persuasion ;-)   (Also, it seems wrong making it "mode".  It should be a
+--option instead).
+* released 1.0.15-pre2
+* fixed device_get_sector_size() - now tells the user what the real sector
+size is (as opposed to -1).  (Thanks to Phillip Garland :-)
+
+April 25th 2000 - Andrew Clausen <clausen@gnu.org>
+* all PED_EXCEPTION_WARNING and PED_EXCEPTION_ERROR exceptions now continue
+with a good default, if they get a PED_EXCEPTION_UNHANDLED.
+
+April 23rd 2000 - Andrew Clausen <clausen@gnu.org>
+* parted.spec.in: now installs binaries/libraries in /sbin and /lib.
+
+April 20th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed CTRL-D bug -> seg violation in _readline() (parted/ui.c)
+
+April 15th 2000 - Andrew Clausen <clausen@gnu.org>
+* Parted boot disk image now available from ftp sites in gnu/parted/bootdisk.
+
+April 14th 2000 - Andrew Clausen <clausen@gnu.org>
+* renamed PedExceptionClass, and PedException's member class to
+PedExceptionType and type, to avoid clashes with C++.
+
+April 13th 2000 - Andrew Clausen <clausen@gnu.org>
+* released 1.0.14-pre1
+
+April 12th 2000 - Andrew Clausen <clausen@gnu.org>
+* changed configure.in: now refuses to attempt to build included gettext.
+Gives appropriate (hopefully ;-) advice on how to fix the problem...
+
+April 11th 2000 - Andrew Clausen <clausen@gnu.org>
+* uses SCSI_BLK_MAJOR rather than SCSI_DISK_MAJOR
+
+April 9th 2000 - Andrew Clausen <clausen@gnu.org>
+* did lots more testing.  All seems well ;-)
+* released 1.0.13
+
+April 8th 2000 - Andrew Clausen <clausen@gnu.org>
+* finally discovered that BLKSSZGET is broken < 2.3.3.  Andries Brouwer
+suggests using, only if <linux/blkpg.h> exists.
+* added doc/USER.jp (Japanese translation of doc/USER).  (Thanks Ryoji!)
+* fixed severe bug: fat_convert_directory():  new_trav and old_trav went
+out of sync, in some circumstances!!!  OUCH!!!  (Probably didn't show up
+on 99.9% people's systems, because it usually will either be out-by-zero
+or out-by>=two.  In both cases, there would be no problems)
+* fixed severe bug: fs_info->root_dir_entry_count should be set when converting
+FAT32 -> FAT16.  OUCH!!!  Why no bug reports??!!
+* released 1.0.13-pre1
+
+April 4rd 2000 - Andrew Clausen <clausen@gnu.org>
+* restructured libparted/device.c somewhat.  Now uses BLKGETSIZE ioctl to
+get size of device, which can address 2 ^ (32 + 9) == 2048Gb.
+* ped_partition_is_busy() in libparted/disk.c now checks /proc/swaps as well as
+/proc/mounts.
+
+April 2nd 2000 - Andrew Clausen <clausen@gnu.org>
+* warns very strongly that Parted isn't good with sector size != 512 bytes,
+in fat code (libparted/fs_fat/bootsector.c)
+
+March 28th 2000 - Andrew Clausen <clausen@gnu.org>
+* now tells the kernel to keep trying to read the partition table. (patch from
+Fernando Fuganti)
+* released 1.0.12
+
+March 26th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed boot loader code, and uncommented code to install it.
+* released 1.0.12-pre1
+
+March 24th 2000 - Andrew Clausen <clausen@gnu.org>
+* moved parted.8 to doc/ directory
+* released 1.0.11
+
+March 22nd 2000 - Andrew Clausen <clausen@gnu.org>
+* moved documentation into doc/ directory.  Changed licence of documentation
+to the GNU Free Documentation Licence 1.1.
+* released 1.0.11-pre2
+
+March 19th 2000 - Andrew Clausen <clausen@gnu.org>
+* now checks /proc/mounts (if available) for testing if a partition is mounted.
+
+March 14th 2000 - Andrew Clausen <clausen@gnu.org>
+* only unset LINGUAS if its non-empty in parted.spec.in (thanks Fabian :-)
+* reintroduce %build (thanks Fabian :-)
+* released 1.0.11-pre1
+
+March 11th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed minor bug in mkpartfs command parsing.
+* #include <sys/sysmacros.h> directly.
+
+February 29th 2000 - Andrew Clausen <clausen@gnu.org>
+* fixed buffer overflow bug in ext2_mkfs
+* fixed bug in ped_malloc(), so running out of memory will fail cleanly
+* made ped_exception_throw() use malloc(), to prevent infinite recursion.
+* released 1.0.10
+
+February 27th 2000 - Andrew Clausen <clausen@gnu.org>
+* now warns the user about system files that may be unmovable
+* released 1.0.10-pre3
+
+February 25th 2000 - Andrew Clausen <clausen@gnu.org>
+* found out semantics for drives that are slightly longer than C*H*S:
+last bit is simply ignored... adjusted probe_real_geom() to match behaviour
+* added probe_acceptable_geom()
+* released 1.0.10-pre2
+
+February 23rd 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* added docs for Windows NT/2000 (largely contributed by Stefan Kanthak)
+* added Dutch translations (contributed by Ivo Timmermans)
+* made process_inconsistent_table() a bit more leanient.
+* released 1.0.10-pre1
+
+February 14th 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* released 1.0.9
+
+February 13th 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* for partitions ending cylinder > 1024, now writes the CHS value as if the
+partition ended on cylinder 1024.
+* released 1.0.9-pre1
+
+
+-----------------------------------------------------------------------------
+1.0.x		Before fork off development series
+-----------------------------------------------------------------------------
+
+February 7th 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* released 1.0.8
+
+February 3rd 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* fixed bug in fat_get_system() introduced in 1.0.8-pre1  (when fs == NULL)
+* released 1.0.8-pre2
+
+February 1st 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* changed fat_get_system(), to use LBA partition types for partitions with
+end > cylinder 1024.
+* released 1.0.8-pre1
+
+January 23rd 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* made ped_device_seek() a bit more portable
+* released 1.0.7
+
+January 22nd 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* changed type of PedDevice's heads, sector, cyl fields to int's.
+* added a man page, contributed by Timshel Knoll <timshel@pobox.com>
+* released 1.0.7-pre1
+
+January 20th 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* released 1.0.6
+
+January 19th 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* fixed >16gig bug in libparted/disk_dos.c  (need LE32, not LE16!!!)
+* released 1.0.6-pre1
+
+January 12th 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* applied typo-clean-up patch from Tim Waugh <twaugh@redhat.com>
+* released 1.0.5
+
+January 9th 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* added autoconfuse checks up-to-date linux/ext2_fs.h
+* imported new ext2_fs.h
+* imported changes from ext2resize, to add support the ext2 "filetype"
+feature
+* released 1.0.5-pre3
+
+January 8th 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* removed -Wno-sign-compare, because it breaks older gcc
+* moved checks for termcap up before readline check, and get readline check
+to use the result of the termcap check.
+* the "termcap" library can be now be one of: -ltermcap, -ltermlib, -lcurses,
+-lncurses.
+* released 1.0.5-pre2
+
+January 7th 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* fixed buglet for FAT16 cluster entries
+* fixed (hopefully) str_list_print_wrap()
+* use static for do_* in parted/parted.c
+* cleaned up parted.spec.in
+* released 1.0.5-pre1
+
+January 5th 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* Fixed a silly bug in ped_partition_set_system() for extended partitions
+* released 1.0.4
+
+January 4th 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* Arrghh!  Found (and fixed) a VERY nasty bug during partition table writes.
+* released 1.0.3
+
+January 3rd 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* Arrghh!  Found (and fixed) a nasty bug in the string printing code.
+* released 1.0.2
+
+January 1st 2000 - Andrew Clausen <clausen@alphalink.com.au>
+* added some documentation about --without-readline and --disable-nls
+* released 1.0.1
+
+December 29th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* disable-nls works now
+* added --without-readline option
+* added Brazillian Portugese translations (thanks Eliphas!)
+* released 1.0.1-pre1
+
+December 21st 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* fixed some typo's in the documentation
+* passed lots of testing :-)
+* released 1.0.0
+
+December 18th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* fixed bug in front-end: when the BIOS geometry doesn't match Linux's, the
+guessed geometry wasn't being used immediately in do_print, do_mk[part]fs,
+and do_resize
+* released 1.0.0-pre14
+
+December 17th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* fixed lots of bugs: lots of fence-post errors (it's 4n - 4 !!!) in fat code
+* released 1.0.0-pre13
+
+December 15th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* fixed bug in ext2_do_inode() - ext2_brelse() getting called on an
+  uninitialized buffer on an error.  Thanks Tim!
+* added PED_ASSERT macro, and used it all over the place
+* fixed cosmetic bugs in front-end
+* released 1.0.0-pre12
+
+December 12th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* added ped_file_system_get_min_size()
+* fixed bug in ext2 code
+* released 1.0.0-pre11
+
+December 11th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* fixed bug with extended partition handling
+* fixed bug in ext2 code
+* added support for checking minimum size of partition
+* released 1.0.0-pre10
+
+December 7th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* fixed character set issues for Japanese and Russian
+* released 1.0.0-pre9
+
+November 8th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* fixed gettext issues: includes intl/ when using included gettext, and 
+--disable-nls works
+* released 1.0.0-pre6
+
+November 6th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* added French translations (thanks Jean-Marc :-)
+* fixed front-end, to use gettext properly.  Big changes.
+* added lots of const's to libparted
+* released 1.0.0-pre5
+
+November 5th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* removed journalling code
+* added German translations (thanks Martin :-)
+
+November 1st 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* released 0.0.9-pre3
+* now uses GNU readline
+
+October 31st 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* released 0.0.9-pre2
+* added PED_EXCEPTION_NO_FEATURE.  Reserve PED_EXCEPTION_BUG for REAL bugs.
+
+October 29th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* released 0.0.9-pre1
+* updated docs
+* added some safety checks
+
+October 26th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* released 0.0.8
+* added to the docs.
+
+October 25th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* released version 0.0.8-pre2
+* better behaviour for weird geometry and inconsistant partition tables
+
+October 18th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* released version 0.0.8-pre1
+* added i18n support
+* fixed some bugs in boot-loader.  Still not working properly though, but I
+got it to boot out of DOS debug :-)
+
+October 16th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* released version 0.0.7
+* ext2 mkfs support
+* manipulation of partition flags
+* better error handling (particularly ext2)
+* lots of bug fixes. 
+
+October 7th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* released 0.0.6
+* fixes a major bug introduced in 0.0.5 in the FAT resizer
+
+October 5th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* released 0.0.5
+* bug fixes and speed-ups
+
+October 2nd 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* released 0.0.4
+* fixed major bug in FAT16->FAT32 upgrade
+* fixed some portability issues for Alpha Linux
+* many minor bug fixes
+
+September 27th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* released 0.0.3
+* Added linux-swap support
+* fixed problem with large hard disks
+* implemented better error handling for ext2
+
+September 20th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* released 0.0.1
+
+June 6th 1999 - Andrew Clausen <clausen@alphalink.com.au>
+* created initial version
