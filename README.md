@@ -1,4 +1,143 @@
+
 odp
 ===
 
-Open Deployment Program
+## Open Deployment Program
+
+The ODP, Open Deployment Program, is a simple and comprehensive deployment tool that automate the software deployment on data center with large number of hosts. The deploy by ODP program is composed into 3 stage: 1) hardware configuration: write down the hardware configuration file, group machines by its model type or role in application, 2) software configuration: write the scripts executed on per a group of machines for preparing software environment, installing software and setting configuration 3) execution: execute scripts by the odp-cli program.
+
+
+### Main Feature
+
+    - Grouping hosts by: machine-type, role, and projects in config file
+    - Parallel execute deployment script on remote hosts
+    - Parallel transfer binary files onto remote hosts
+    - Interactive cli to issue commands, watch exeucte progress and review execution result/err
+    - Run mulitple script in batch
+    - Detect active config file changed and auto reload during CLI
+    - TODO: Keep execution states of each hosts
+    - TODO: Job controller; run jobs in backgroud/ in sequence and specify job depenendencies
+
+
+### Description
+
+In ODP, all the configuration is defined in one config file contains both hardware config and software scirpt.
+Below is an example of simple odp config file.
+
+```
+machine:
+    all=192.168.122.11-19
+
+
+action:
+
+   fixdnsslow:
+       echo "UseDNS no" >> /etc/ssh/sshd_config
+       /etc/init.d/ssh restart        
+   fixapt:
+       $put /etc/apt/sources.list
+       . /etc/profile
+       mv -f sources.list /etc/apt/sources.list
+       apt-get -y clean
+       dpkg --configure -a
+       apt-get -y update --fix-missing
+```
+
+
+1. Hardware configuration 
+Write down the hardware configuration file, group machines by its model type or role in application 
+Below is example
+Note, the ident rule of ODP configuration file is same as Python program; the group label must keep at first identification level and its following statements must be at the same second level.
+```
+machine:
+    all=192.168.122.11-19
+role:
+    web = 192.168.122.12
+    webapp = 192.168.122.13-18
+    db = 192.168.122.19
+project:
+    down   = 192.168.1.5
+    tr3    = 192.168.3.1-4
+    tr4    = 192.168.3.1-4
+```
+
+2. Software configuration ###
+	The software configuration of a data center is composed of many actions . Each action is defined by an action name
+and a list of statements that is executed for configuring host software. The ODP program support 3 kinds of statements: 
+a) local statements: runs in deployment server, b) remote statements: runs in target hosts and c) macro statements: it do 
+predefined tasks for helping deployment process.
+example of local and remote statement:
+```
+	service apache2 start
+	wget http://192.168.122.1/goodies.tgz
+	tar xzvf goodies.tgz
+	
+```
+
+ODP supported macro statements:
+```
+	$sync <dirname or filename>      # sync local file or directory to remote hosts
+```
+
+
+
+
+
+3. Execution
+
+The execution stage execute actions on group of host machines by odp-cli program. Use below command to enter cli:
+	odp-cli homedc.cfg
+
+ODP CLI commands:
+    $ list        list hosts groups 
+    $ ls          list available actions
+    $ run         run action scripts on host groups	
+        	      run <group-name> <action-name1>, <action-name2>, ....    <-- this run is a job compsed of many actions
+    $ err         display error message of previous action
+    $ out         display output message of previous action
+
+
+
+Assumption: we assume the deployment server can ssh into every host without password. If you had not yet configured no-password settings, you could use the odp-nopass script. 
+It's usage is: odp <host-ip> <password>
+
+
+
+#### Idea
+    Servers in managed data center are grouped by: machine-type, role, and projects.
+During initial deployment, commands usually wants to be executed on hosts of specific machine-type,
+during application deployment, commands are executed on server due to his role in the applications
+and during maintenance, commands are executed on servers of specific project.
+
+    For simplified of configuration and scirpt management, the data center's configuration and actions
+wants to perform is stored in a configuration file. The initial setup script, application deployment/
+undeployment script, system cleanup script and host status check script are placed in the same file.
+This kind of design helps administrator to understand their config and requementment at once and
+ease the effor to extend data center.
+
+    If the scripts is really complex for deployment, administrator should write this scripts in a standalone bash script
+and called it in action.
+
+
+
+
+### Notes
+1. log files are stored in ~/.odp/err
+   file name format is like:
+        webapp_run_deploy_webapp_20121106_1012.html
+        each steps in action is a row, click on each row to see err and output log
+2. this tool assume you have no pass access to all hosts
+3. Below is feature of JOB control and not supported yet:
+jobs:
+    data_center_init_job:
+        job1: run webapp deploy_webapp, check_webapp
+        job2: run db deploy_db, check_db
+        job3: run web deploy_web, check_web
+        job1 => job3
+        job2 => job3
+        1 and 2 should concurrent, how to config these setting ?
+
+
+
+
+
