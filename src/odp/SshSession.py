@@ -1,7 +1,8 @@
 import time
 import subprocess
-import select
-import sys
+import select, sys, os
+import pipes
+
 # (connect T/F, proc, buffer)
 # status 0:nc, 1:connect 
 class SshSession:
@@ -13,11 +14,17 @@ class SshSession:
         self.host = host
     def connect(self):
         print 'connect to dest %s' % self.host
-        self.proc = subprocess.Popen( ['ssh', 'localhost'], 
+        t = pipes.Template()
+        w = t.open(self.host, 'w')
+        self.piper = t.open(self.host, 'r')
+        self.proc = subprocess.Popen( ['ssh', self.host], 
             stdin = subprocess.PIPE,
-            stdout =  subprocess.PIPE,# sys.stdout,
-            stderr =  subprocess.PIPE, # sys.stdout, # subprocess.PIPE,
-            close_fds=True)
+            stdout = subprocess.PIPE,
+            stderr =  subprocess.PIPE,
+            close_fds=True )
+        # assume connect here
+        self.status = 1
+        print 'done'
     # every one tick, poll status of proc, stdout and stderr
     # return (boolean, boolean, boolean) indicate state changes
     def poll(self):
