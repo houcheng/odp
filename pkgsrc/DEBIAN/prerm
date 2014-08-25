@@ -1,2 +1,1 @@
-rm -f /usr/bin/odp-cli
-rm -f /usr/bin/odp-nopass
+rm -f /usr/bin/odp

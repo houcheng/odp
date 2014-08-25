@@ -140,11 +140,11 @@ def run_cli(cfgfile, args):
 
 
 def main():
-    cfgfile = '/opt/odp/odp.cfg'
+    cfgfile = './odp.cfg'
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hf:")
         for o,v in opts:
-            if o == '-h':
+            if o == '-h' or o == '--help':
                 usage()
                 sys.exit(0)
             if o=='-f':

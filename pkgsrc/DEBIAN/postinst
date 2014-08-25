@@ -1,4 +1,3 @@
-ln -s /opt/odp/bin/odp-nopass   /usr/bin/odp-nopass
-ln -s /opt/odp/bin/odp-cli      /usr/bin/odp-cli
-ln -s /opt/odp/bin/odp-croot      /usr/bin/odp-croot
+ln -s /opt/odp/bin/odp      /usr/bin/odp
+
 
